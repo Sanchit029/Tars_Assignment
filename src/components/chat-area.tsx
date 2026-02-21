@@ -18,6 +18,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { formatMessageTime } from "@/lib/utils";
+import { ChatSkeleton } from "./skeletons";
 
 interface ChatAreaProps {
   conversationId: Id<"conversations">;
@@ -192,6 +193,10 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
   const otherUser = conversation?.participantDetails.find(
     (p) => p?._id !== currentUser?._id
   );
+
+  if (conversation === undefined) {
+    return <ChatSkeleton />;
+  }
 
   return (
     <div className="flex flex-col h-full">

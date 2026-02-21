@@ -8,6 +8,7 @@ import { Id } from "../../convex/_generated/dataModel";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, MessageCircle, Users } from "lucide-react";
+import { SidebarSkeleton } from "./skeletons";
 
 interface UserListProps {
   onSelectConversation: (conversationId: Id<"conversations">) => void;
@@ -60,7 +61,9 @@ export function UserList({ onSelectConversation }: UserListProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {!users || users.length === 0 ? (
+        {users === undefined ? (
+          <SidebarSkeleton />
+        ) : users.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground p-8">
             <MessageCircle className="h-12 w-12 mb-3 opacity-50" />
             <p className="text-center text-sm">

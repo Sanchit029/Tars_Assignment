@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { MessageSquare } from "lucide-react";
 import { formatMessageTime } from "@/lib/utils";
+import { SidebarSkeleton } from "./skeletons";
 
 interface ConversationListProps {
   selectedConversationId: Id<"conversations"> | null;
@@ -49,6 +50,10 @@ export function ConversationList({
       (p) => p?._id !== currentUser._id
     );
   };
+
+  if (conversations === undefined) {
+    return <SidebarSkeleton />;
+  }
 
   if (!conversations || conversations.length === 0) {
     return (
