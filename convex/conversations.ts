@@ -60,7 +60,9 @@ export const getUserConversations = query({
         );
         return {
           ...conv,
-          participantDetails: participants.filter(Boolean),
+          participantDetails: participants.filter(
+            (p): p is NonNullable<typeof p> => p !== null
+          ),
         };
       })
     );
@@ -81,7 +83,9 @@ export const getConversation = query({
 
     return {
       ...conv,
-      participantDetails: participants.filter(Boolean),
+      participantDetails: participants.filter(
+        (p): p is NonNullable<typeof p> => p !== null
+      ),
     };
   },
 });

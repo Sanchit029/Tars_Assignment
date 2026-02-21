@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useUser } from "@clerk/nextjs";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
@@ -29,7 +30,7 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
   const { user } = useUser();
   const [messageText, setMessageText] = useState("");
   const [showScrollButton, setShowScrollButton] = useState(false);
-  const [failedMessages, setFailedMessages] = useState<Set<string>>(new Set());
+  const [failedMessages, setFailedMessages] = useState<Map<string, string>>(new Map());
   const [activeReactionMenu, setActiveReactionMenu] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -90,18 +91,29 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
       if (isNearBottomRef.current) {
         setTimeout(() => scrollToBottom(), 50);
       } else {
-        setShowScrollButton(true);
+        // Use startTransition to avoid cascading render warning
+        React.startTransition(() => setShowScrollButton(true));
       }
     }
     prevMessageCountRef.current = messageCount;
   }, [messages, scrollToBottom]);
 
-  // Initial scroll
+  // Initial scroll when conversation changes or messages first load
   useEffect(() => {
     if (messages && messages.length > 0) {
       setTimeout(() => scrollToBottom(), 100);
     }
-  }, [conversationId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [conversationId, messages, scrollToBottom]);
+
+  // Clear typing on unmount or conversation switch
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      if (currentUser) {
+        setTyping({ conversationId, userId: currentUser._id, isTyping: false });
+      }
+    };
+  }, [conversationId, currentUser, setTyping]);
 
   const handleTyping = useCallback(() => {
     if (!currentUser) return;
@@ -145,10 +157,8 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
         senderId: currentUser._id,
         content,
       });
-      failedMessages.delete(tempId);
-      setFailedMessages(new Set(failedMessages));
     } catch {
-      setFailedMessages((prev) => new Set(prev).add(tempId));
+      setFailedMessages((prev) => new Map(prev).set(tempId, content));
     }
   };
 
@@ -159,8 +169,10 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
     }
   };
 
-  const handleRetry = async (content: string, tempId: string) => {
+  const handleRetry = async (tempId: string) => {
     if (!currentUser) return;
+    const content = failedMessages.get(tempId);
+    if (!content) return;
     try {
       await sendMessage({
         conversationId,
@@ -168,7 +180,7 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
         content,
       });
       setFailedMessages((prev) => {
-        const next = new Set(prev);
+        const next = new Map(prev);
         next.delete(tempId);
         return next;
       });
@@ -369,17 +381,22 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
         )}
 
         {/* Failed messages */}
-        {Array.from(failedMessages).map((tempId) => (
+        {Array.from(failedMessages.entries()).map(([tempId, content]) => (
           <div key={tempId} className="flex justify-end">
-            <div className="flex items-center gap-2 text-destructive text-xs">
-              <AlertCircle className="h-4 w-4" />
-              <span>Failed to send</span>
-              <button
-                onClick={() => handleRetry("", tempId)}
-                className="flex items-center gap-1 underline"
-              >
-                <RefreshCw className="h-3 w-3" /> Retry
-              </button>
+            <div className="max-w-[75%]">
+              <div className="rounded-2xl px-3.5 py-2 text-sm bg-destructive/10 border border-destructive/30">
+                <p className="break-words">{content}</p>
+              </div>
+              <div className="flex items-center gap-2 text-destructive text-xs mt-1 justify-end">
+                <AlertCircle className="h-3 w-3" />
+                <span>Failed to send</span>
+                <button
+                  onClick={() => handleRetry(tempId)}
+                  className="flex items-center gap-1 underline"
+                >
+                  <RefreshCw className="h-3 w-3" /> Retry
+                </button>
+              </div>
             </div>
           </div>
         ))}

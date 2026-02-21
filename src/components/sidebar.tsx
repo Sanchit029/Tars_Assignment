@@ -28,7 +28,7 @@ export function Sidebar({
       <div className="p-4 border-b">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <UserButton afterSignOutUrl="/" />
+            <UserButton />
             <div>
               <p className="font-semibold text-sm">{user?.fullName}</p>
               <p className="text-xs text-muted-foreground">

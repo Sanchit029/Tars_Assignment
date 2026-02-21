@@ -8,6 +8,10 @@ export const sendMessage = mutation({
     content: v.string(),
   },
   handler: async (ctx, args) => {
+    if (args.content.length > 5000) {
+      throw new Error("Message too long");
+    }
+
     const messageId = await ctx.db.insert("messages", {
       conversationId: args.conversationId,
       senderId: args.senderId,
