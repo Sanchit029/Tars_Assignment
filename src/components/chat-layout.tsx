@@ -28,7 +28,7 @@ export function ChatLayout() {
     <div className="flex h-screen bg-background">
       {/* Sidebar - hidden on mobile when chat is open */}
       <div
-        className={`w-full md:w-[350px] lg:w-[380px] border-r flex-shrink-0 ${
+        className={`w-full md:w-87.5 lg:w-95 border-r shrink-0 ${
           mobileView === "chat" ? "hidden md:flex" : "flex"
         } flex-col`}
       >
@@ -50,11 +50,13 @@ export function ChatLayout() {
             onBack={handleBack}
           />
         ) : (
-          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-            <MessageSquare className="h-16 w-16 mb-4 opacity-30" />
-            <p className="text-lg font-medium">Welcome to TARS Chat</p>
-            <p className="text-sm mt-1">
-              Select a conversation or find users to start chatting
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-3">
+            <div className="h-20 w-20 rounded-2xl bg-muted flex items-center justify-center mb-2">
+              <MessageSquare className="h-9 w-9 opacity-40" />
+            </div>
+            <p className="text-lg font-medium text-foreground">Welcome to TARS Chat</p>
+            <p className="text-sm max-w-xs text-center">
+              Select a conversation from the sidebar or find users to start chatting
             </p>
           </div>
         )}

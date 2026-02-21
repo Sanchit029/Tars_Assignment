@@ -196,7 +196,7 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex items-center gap-3 p-4 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
         {onBack && (
           <Button variant="ghost" size="icon" onClick={onBack} className="md:hidden">
             <ArrowLeft className="h-5 w-5" />
@@ -244,9 +244,12 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
         className="flex-1 overflow-y-auto p-4 space-y-3"
       >
         {!messages || messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-            <p className="text-sm">No messages yet</p>
-            <p className="text-xs mt-1">Send a message to start the conversation!</p>
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-2">
+            <div className="h-14 w-14 rounded-full bg-muted flex items-center justify-center mb-2">
+              <Send className="h-6 w-6 opacity-40" />
+            </div>
+            <p className="text-sm font-medium">No messages yet</p>
+            <p className="text-xs">Send a message to start the conversation!</p>
           </div>
         ) : (
           messages.map((msg) => {
@@ -259,7 +262,7 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
               >
                 <div className={`flex gap-2 max-w-[75%] ${isOwn ? "flex-row-reverse" : ""}`}>
                   {!isOwn && (
-                    <Avatar className="h-7 w-7 flex-shrink-0 mt-1">
+                    <Avatar className="h-7 w-7 shrink-0 mt-1">
                       <AvatarImage src={msg.sender?.imageUrl} />
                       <AvatarFallback className="text-xs">
                         {msg.sender?.name?.charAt(0)?.toUpperCase() ?? "?"}
@@ -268,7 +271,7 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
                   )}
                   <div>
                     <div
-                      className={`relative group rounded-2xl px-3.5 py-2 text-sm ${
+                      className={`relative group rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                         msg.isDeleted
                           ? "bg-muted italic text-muted-foreground"
                           : isOwn
@@ -286,7 +289,7 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
                         "This message was deleted"
                       ) : (
                         <>
-                          <p className="break-words">{msg.content}</p>
+                          <p className="whitespace-pre-wrap wrap-anywhere">{msg.content}</p>
                           {isOwn && !msg.isDeleted && (
                             <button
                               onClick={(e) => {
@@ -367,7 +370,7 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
                     )}
 
                     <p
-                      className={`text-[10px] text-muted-foreground mt-0.5 ${
+                      className={`text-xs text-muted-foreground mt-1 ${
                         isOwn ? "text-right" : ""
                       }`}
                     >
@@ -385,7 +388,7 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
           <div key={tempId} className="flex justify-end">
             <div className="max-w-[75%]">
               <div className="rounded-2xl px-3.5 py-2 text-sm bg-destructive/10 border border-destructive/30">
-                <p className="break-words">{content}</p>
+                <p className="wrap-anywhere">{content}</p>
               </div>
               <div className="flex items-center gap-2 text-destructive text-xs mt-1 justify-end">
                 <AlertCircle className="h-3 w-3" />
@@ -406,10 +409,10 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
 
       {/* Scroll to bottom button */}
       {showScrollButton && (
-        <div className="relative">
+        <div className="flex justify-center -mt-10 relative z-10 pointer-events-none">
           <button
             onClick={scrollToBottom}
-            className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground rounded-full px-4 py-1.5 text-xs shadow-lg flex items-center gap-1 hover:bg-primary/90 transition-colors z-10"
+            className="pointer-events-auto bg-primary text-primary-foreground rounded-full px-4 py-1.5 text-xs shadow-lg flex items-center gap-1 hover:bg-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             <ChevronDown className="h-3.5 w-3.5" />
             New messages

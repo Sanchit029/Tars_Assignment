@@ -6,8 +6,6 @@ import { Id } from "../../convex/_generated/dataModel";
 import { UserList } from "./user-list";
 import { ConversationList } from "./conversation-list";
 import { CreateGroup } from "./create-group";
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
 import { Users, MessageSquare } from "lucide-react";
 
 interface SidebarProps {
@@ -44,26 +42,30 @@ export function Sidebar({
       </div>
 
       {/* Tab buttons */}
-      <div className="flex border-b">
-        <Button
-          variant={showUsers ? "ghost" : "secondary"}
-          className="flex-1 rounded-none gap-2"
+      <div className="flex border-b px-2 gap-1">
+        <button
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-colors border-b-2 ${
+            !showUsers
+              ? "border-primary text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
           onClick={() => setShowUsers(false)}
         >
           <MessageSquare className="h-4 w-4" />
           Chats
-        </Button>
-        <Button
-          variant={showUsers ? "secondary" : "ghost"}
-          className="flex-1 rounded-none gap-2"
+        </button>
+        <button
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-colors border-b-2 ${
+            showUsers
+              ? "border-primary text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          }`}
           onClick={() => setShowUsers(true)}
         >
           <Users className="h-4 w-4" />
           Users
-        </Button>
+        </button>
       </div>
-
-      <Separator />
 
       {/* Content */}
       <div className="flex-1 overflow-hidden">

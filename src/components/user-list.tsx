@@ -75,7 +75,7 @@ export function UserList({ onSelectConversation }: UserListProps) {
               <button
                 key={u._id}
                 onClick={() => handleUserClick(u._id)}
-                className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors text-left"
+                className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-accent transition-colors text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <div className="relative">
                   <Avatar className="h-10 w-10">

@@ -102,7 +102,11 @@ export function CreateGroup({ onGroupCreated }: CreateGroupProps) {
                     className="inline-flex items-center gap-1 bg-primary/10 text-primary rounded-full px-2.5 py-1 text-xs"
                   >
                     {u.name}
-                    <button onClick={() => toggleUser(userId)}>
+                    <button
+                      onClick={() => toggleUser(userId)}
+                      aria-label={`Remove ${u.name}`}
+                      className="rounded-full hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    >
                       <X className="h-3 w-3" />
                     </button>
                   </span>

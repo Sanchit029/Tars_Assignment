@@ -75,7 +75,7 @@ export function ConversationList({
           <button
             key={conv._id}
             onClick={() => onSelectConversation(conv._id)}
-            className={`w-full flex items-center gap-3 p-3 hover:bg-accent transition-colors text-left border-b ${
+            className={`w-full flex items-center gap-3 p-3 hover:bg-accent transition-colors text-left border-b focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset ${
               isSelected ? "bg-accent" : ""
             }`}
           >
@@ -108,7 +108,7 @@ export function ConversationList({
                   {conv.isGroup ? conv.groupName : other?.name ?? "Unknown"}
                 </p>
                 {conv.lastMessageTime && (
-                  <span className="text-xs text-muted-foreground ml-2 flex-shrink-0">
+                  <span className="text-xs text-muted-foreground ml-2 shrink-0">
                     {formatMessageTime(conv.lastMessageTime)}
                   </span>
                 )}
@@ -120,7 +120,7 @@ export function ConversationList({
                 {unread > 0 && (
                   <Badge
                     variant="default"
-                    className="ml-2 h-5 min-w-5 flex items-center justify-center rounded-full text-xs px-1.5 flex-shrink-0"
+                    className="ml-2 h-5 min-w-5 flex items-center justify-center rounded-full text-xs px-1.5 shrink-0"
                   >
                     {unread}
                   </Badge>
