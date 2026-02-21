@@ -5,6 +5,7 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import { Id } from "../../convex/_generated/dataModel";
 import { UserList } from "./user-list";
 import { ConversationList } from "./conversation-list";
+import { CreateGroup } from "./create-group";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Users, MessageSquare } from "lucide-react";
@@ -35,6 +36,10 @@ export function Sidebar({
               </p>
             </div>
           </div>
+          <CreateGroup onGroupCreated={(id) => {
+            onSelectConversation(id);
+            setShowUsers(false);
+          }} />
         </div>
       </div>
 
