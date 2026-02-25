@@ -1,12 +1,12 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, CheckCheck } from "lucide-react";
 import { formatMessageTime } from "@/lib/utils";
 import { SidebarSkeleton } from "./skeletons";
 
@@ -35,6 +35,10 @@ export function ConversationList({
     api.messages.getUnreadCounts,
     currentUser ? { userId: currentUser._id } : "skip"
   );
+
+  const markAllAsRead = useMutation(api.messages.markAllAsRead);
+
+  const totalUnread = unreadCounts?.reduce((sum, u) => sum + u.count, 0) ?? 0;
 
   const getUnreadCount = (conversationId: Id<"conversations">) => {
     if (!unreadCounts) return 0;
@@ -70,7 +74,22 @@ export function ConversationList({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex flex-col flex-1 overflow-hidden">
+      {totalUnread > 0 && (
+        <div className="flex items-center justify-between px-3 py-1.5 bg-muted/50 border-b">
+          <span className="text-xs text-muted-foreground">
+            {totalUnread} unread
+          </span>
+          <button
+            onClick={() => currentUser && markAllAsRead({ userId: currentUser._id })}
+            className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 font-medium transition-colors"
+          >
+            <CheckCheck className="h-3.5 w-3.5" />
+            Mark all as read
+          </button>
+        </div>
+      )}
+      <div className="flex-1 overflow-y-auto">
       {conversations.map((conv) => {
         const other = conv.isGroup ? null : getOtherParticipant(conv);
         const unread = getUnreadCount(conv._id);
@@ -135,6 +154,7 @@ export function ConversationList({
           </button>
         );
       })}
+      </div>
     </div>
   );
 }

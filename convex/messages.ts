@@ -204,6 +204,22 @@ export const markAsRead = mutation({
   },
 });
 
+export const markAllAsRead = mutation({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const unreadEntries = await ctx.db
+      .query("unreadCounts")
+      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .collect();
+
+    await Promise.all(
+      unreadEntries
+        .filter((e) => e.count > 0)
+        .map((e) => ctx.db.patch(e._id, { count: 0, lastRead: Date.now() }))
+    );
+  },
+});
+
 export const getUnreadCounts = query({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {

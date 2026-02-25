@@ -458,6 +458,7 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
             disabled={!messageText.trim()}
             size="icon"
           >
+            <span>Send</span>
             <Send className="h-4 w-4" />
           </Button>
         </div>
