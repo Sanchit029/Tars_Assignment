@@ -17,7 +17,7 @@ import {
   AlertCircle,
   RefreshCw,
 } from "lucide-react";
-import { formatMessageTime } from "@/lib/utils";
+import { formatMessageTime, formatLastSeen } from "@/lib/utils";
 import { ChatSkeleton } from "./skeletons";
 
 interface ChatAreaProps {
@@ -237,7 +237,9 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
               ? `${conversation.participants.length} members`
               : otherUser?.isOnline
                 ? "Online"
-                : "Offline"}
+                : otherUser?.lastSeen
+                  ? formatLastSeen(otherUser.lastSeen)
+                  : "Offline"}
           </p>
         </div>
       </div>
@@ -458,7 +460,6 @@ export function ChatArea({ conversationId, onBack }: ChatAreaProps) {
             disabled={!messageText.trim()}
             size="icon"
           >
-            <span>Send</span>
             <Send className="h-4 w-4" />
           </Button>
         </div>

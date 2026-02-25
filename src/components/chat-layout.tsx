@@ -1,6 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
 import { Sidebar } from "./sidebar";
 import { ChatArea } from "./chat-area";
@@ -9,6 +12,19 @@ import { useStoreUser } from "@/hooks/useStoreUser";
 
 export function ChatLayout() {
   useStoreUser();
+
+  const { user } = useUser();
+  const currentUser = useQuery(api.users.getUser, user ? { clerkId: user.id } : "skip");
+  const unreadCounts = useQuery(
+    api.messages.getUnreadCounts,
+    currentUser ? { userId: currentUser._id } : "skip"
+  );
+
+  useEffect(() => {
+    const total = unreadCounts?.reduce((sum, u) => sum + u.count, 0) ?? 0;
+    document.title = total > 0 ? `(${total}) TARS Chat` : "TARS Chat";
+    return () => { document.title = "TARS Chat"; };
+  }, [unreadCounts]);
 
   const [selectedConversationId, setSelectedConversationId] =
     useState<Id<"conversations"> | null>(null);
